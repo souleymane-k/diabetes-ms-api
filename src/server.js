@@ -1,7 +1,15 @@
 const app = require('./app');
 const { PORT } = require('./config');
+const cors = require('cors');
+const {CLIENT_ORIGIN} = require('./config');
 
-// const PORT = process.env.PORT || 3000;
+app.use(
+    cors({
+        origin: CLIENT_ORIGIN
+    })
+);
+
+
 
  app.get('/api/*', (req, res) => {
    res.json({ok: true});
@@ -10,7 +18,5 @@ app.listen(PORT, () => {
   console.log(`Server listening at http://localhost:${PORT}`)
 })
 
-//API_TOKEN: 2ad6cd5c-17ed-4b7a-9309-8252fb3eb820
+// const PORT = process.env.PORT || 3000;
 
-//.env PORT=8001
-//EXAMPLE="example-environment-variable"

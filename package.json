@@ -13,8 +13,8 @@
   },
   "keywords": [],
   "engines": {
-      "node": "v14.15.1"
-    },
+    "node": "v14.15.1"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
