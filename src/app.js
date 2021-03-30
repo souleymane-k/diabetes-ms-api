@@ -5,6 +5,7 @@ const cors = require('cors')
 const helmet = require('helmet')
 const { NODE_ENV } = require('./config')
 const { response } = require('express')
+const monthsRouter = require('./months/months-router')
 
 const app = express()
 
@@ -19,6 +20,10 @@ app.use(morgan(morganOption))
 
 app.use(helmet())
 app.use(cors())
+app.use(monthsRouter)
+app.use('/months', monthsRouter)
+
+// app.use('/api/months', monthsRouter)
 
 app.get('/', (req, res)=>{
     res.send('Hello, boilerplate!')
