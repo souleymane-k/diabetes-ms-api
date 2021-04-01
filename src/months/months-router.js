@@ -7,6 +7,19 @@ const monthsRouter = express.Router()
 // const bodyParser = express.json()
 const jsonParser = express.json()
 
+const serializeMonth = month => ({
+  id: month.id,
+  title: xss(bookmark.title),
+  monthName: month.monthName,
+  mealName: month.mealName,
+  result:month.result,
+  date:month.date,
+  description:month.description,
+  dtype:month.dtype
+  // description: xss(month.description),
+  
+})
+
 
 monthsRouter
 .route('/months')
@@ -69,7 +82,7 @@ monthsRouter
 
 
   monthsRouter
-  .route('/months/:monthName')
+  .route('/months/:month_id')
   .get((req, res) => {
     const {monthName} = req.params
     const month = store.months.find(i => i.monthName == monthName)
