@@ -79,12 +79,24 @@ monthsRouter
 //       .json(month)
 //   })
 
+monthsRouter
+.route('/months/monthName')
+.get((req,res)=>{
+  const {monthName} = req.params
+  let array = [];
+  for(let i=0; i<store.months.length; i++){
+    if(months[i].monthName === sameMonthName){
+      array.push(months[i].monthName)
+    }
+  }
+  res.json(monthName)
+})
 
   monthsRouter
   .route('/:monthName')
   .get((req, res) => {
     const {monthName} = req.params
-    const month = store.months.find(months => months.monthName == monthName)
+    const month = store.months.find(i => i.monthName == monthName)
     
     res.json(month)
   })
