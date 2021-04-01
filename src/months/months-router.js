@@ -85,6 +85,7 @@ monthsRouter
   .get((req, res) => {
     const {monthName} = req.params
     const month = store.months.find(i => i.monthName == monthName)
+    (...monthName)
     res.json(month)
   })
 
