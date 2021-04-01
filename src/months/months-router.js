@@ -25,6 +25,15 @@ monthsRouter
     res.json(month)
   })
 
+  monthsRouter
+  .route('/month/:monthId')
+  .get((req, res) => {
+    const{monthId} = req.params
+    const month = store.months.find(i => i.monthId == monthId)
+    
+    res.json(month)
+  })
+
   
 
 
