@@ -23,16 +23,17 @@ const serializeMonth = month => ({
 
 monthsRouter
 .route('/')
-  .get((req, res) => {
-    res.json(store.months)
-  })
-  // .get((req, res, next) => {
-  //   MonthsService.getAllMonths()
-  //     .then(months => {
-  //       res.json(months.map(serializeMonth('store')))
-  //     })
-  //     .catch(next)
+  // .get((req, res) => {
+  //   res.json(store.months)
   // })
+  .get((req, res, next) => {
+    const knexInstance = req.app.get('store')
+    MonthsService.getAllMonths(knexInstance)
+      .then(months => {
+        res.json(months.map(serializeMonth))
+      })
+      .catch(next)
+  })
   .post(jsonParser, (req, res, next) => {
       //'monthName','mealName', 'result', 'date', 'description', 'dtype'
     const { monthName, mealName, result, date, description,dtype } = req.body
@@ -52,6 +53,8 @@ monthsRouter
       })
       .catch(next)
   })
+
+  
 
   //
   //
