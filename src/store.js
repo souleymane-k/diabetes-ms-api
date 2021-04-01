@@ -261,6 +261,8 @@ export default {
     }
     ]
   }
+
+  module.exports = {store}
   
   
   
