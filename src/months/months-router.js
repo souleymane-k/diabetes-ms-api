@@ -16,14 +16,14 @@ monthsRouter
   })
   
 
-  monthsRouter
-  .route('/:monthName')
-  .get((req, res) => {
-    const {monthName} = req.params
-    const month = store.months.find(i => i.monthName == monthName)
+  // monthsRouter
+  // .route('/:monthName')
+  // .get((req, res) => {
+  //   const {monthName} = req.params
+  //   const month = store.months.find(i => i.monthName == monthName)
     
-    res.json(month)
-  })
+  //   res.json(month)
+  // })
 
   monthsRouter
   .route('/month/:monthId')
