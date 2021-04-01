@@ -7,18 +7,18 @@ const monthsRouter = express.Router()
 // const bodyParser = express.json()
 const jsonParser = express.json()
 
-// const serializeMonth = month => ({
-//   id: month.id,
-//   // title: xss(bookmark.title),
-//   monthName: month.monthName,
-//   mealName: month.mealName,
-//   result:month.result,
-//   date:month.date,
-//   description:month.description,
-//   dtype:month.dtype
-//   // description: xss(month.description),
+const serializeMonth = month => ({
+  id: month.id,
+  // title: xss(bookmark.title),
+  monthName: month.monthName,
+  mealName: month.mealName,
+  result:month.result,
+  date:month.date,
+  description:month.description,
+  dtype:month.dtype
+  // description: xss(month.description),
   
-// })
+})
 
 
 monthsRouter
@@ -48,7 +48,7 @@ monthsRouter
         res
           .status(201)
           .location(path.posix.join(req.originalUrl, `/${month.monthName}`))
-          .json(serializeNote(month))
+          .json(serializeMonth(month))
       })
       .catch(next)
   })
@@ -94,6 +94,32 @@ monthsRouter
 
   monthsRouter
   .route('/:monthName')
+  .get((req, res) => {
+    const {monthName} = req.params
+    const month = store.months.find(i => i.monthName == monthName)
+    
+    res.json(month)
+  })
+
+  monthsRouter
+  .route('/:month_id')
+  .all((req, res, next) => {
+    const { month_id } = req.params
+    MonthsService.getById(req.app.get('store'), month_id)
+      .then(month => {
+        if (!month) {
+          logger.error(`Month with id ${month_id} not found.`)
+          return res.status(404).json({
+            error: { message: `Month Not Found` }
+          })
+        }
+
+        res.month = month
+        next()
+      })
+      .catch(next)
+
+  })
   .get((req, res) => {
     const {monthName} = req.params
     const month = store.months.find(i => i.monthName == monthName)
