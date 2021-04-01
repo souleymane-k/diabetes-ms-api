@@ -23,36 +23,36 @@ const serializeMonth = month => ({
 
 monthsRouter
 .route('/')
-  // .get((req, res) => {
-  //   res.json(store.months)
+  .get((req, res) => {
+    res.json(store.months)
+  })
+  // .get((req, res, next) => {
+  //   const monthData = req.app.get('store')
+  //   MonthsService.getAllMonths(monthData)
+  //     .then(months => {
+  //       res.json(months.map(serializeMonth))
+  //     })
+  //     .catch(next)
   // })
-  .get((req, res, next) => {
-    const knexInstance = req.app.get('store')
-    MonthsService.getAllMonths(knexInstance)
-      .then(months => {
-        res.json(months.map(serializeMonth))
-      })
-      .catch(next)
-  })
-  .post(jsonParser, (req, res, next) => {
-      //'monthName','mealName', 'result', 'date', 'description', 'dtype'
-    const { monthName, mealName, result, date, description,dtype } = req.body
-    const newMonth = { monthName, mealName, result, date, description,dtype}
+  // .post(jsonParser, (req, res, next) => {
+  //     //'monthName','mealName', 'result', 'date', 'description', 'dtype'
+  //   const { monthName, mealName, result, date, description,dtype } = req.body
+  //   const newMonth = { monthName, mealName, result, date, description,dtype}
 
-    for (const [key, value] of Object.entries(newMonth))
-      if (value == null)
-        return res.status(400).json({
-          error: { message: `Missing '${key}' in request body` }
-        })
+  //   for (const [key, value] of Object.entries(newMonth))
+  //     if (value == null)
+  //       return res.status(400).json({
+  //         error: { message: `Missing '${key}' in request body` }
+  //       })
 
-      .then(month => {
-        res
-          .status(201)
-          .location(path.posix.join(req.originalUrl, `/${month.monthName}`))
-          .json(serializeMonth(month))
-      })
-      .catch(next)
-  })
+  //     .then(month => {
+  //       res
+  //         .status(201)
+  //         .location(path.posix.join(req.originalUrl, `/${month.monthName}`))
+  //         .json(serializeMonth(month))
+  //     })
+  //     .catch(next)
+  // })
 
   
 
@@ -135,8 +135,8 @@ monthsRouter
 
   })
   .get((req, res) => {
-    // const {monthName} = req.params
-    // const month = store.months.find(i => i.monthName == monthName)
+    const {monthName} = req.params
+    const month = store.months.find(i => i.monthName == monthName)
     
     res.json(serializeMonth(res.month))
   })
