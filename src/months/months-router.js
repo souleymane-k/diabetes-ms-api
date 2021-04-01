@@ -22,15 +22,20 @@ const serializeMonth = month => ({
 
 
 monthsRouter
-.route('/months')
-  .get((req, res) => {
-    res.json(store.months)
+.route('/')
+  // .get((req, res) => {
+  //   res.json(store.months)
+  // })
+  .get((req, res, next) => {
+    MonthsService.getAllMonths(req.app.get('store'))
+      .then(months => {
+        res.json(months.map(serializeMonth))
+      })
+      .catch(next)
   })
-  //
-  //
-  .post(jsonParser, (req, res) => {
+  .post(jsonParser, (req, res, next) => {
       //'monthName','mealName', 'result', 'date', 'description', 'dtype'
-    const { monthName, mealName, result, date, description,dtype } = req.body;
+    const { monthName, mealName, result, date, description,dtype } = req.body
     const newMonth = { monthName, mealName, result, date, description,dtype}
 
     for (const [key, value] of Object.entries(newMonth))
@@ -39,19 +44,13 @@ monthsRouter
           error: { message: `Missing '${key}' in request body` }
         })
 
-    // newMonth.modified = modified;
-
-    // NotesService.insertNote(
-    //   req.app.get('db'),
-    //   newMonth
-    // )
       .then(month => {
         res
           .status(201)
           .location(path.posix.join(req.originalUrl, `/${month.monthName}`))
           .json(serializeNote(month))
       })
-    //   .catch(next)
+      .catch(next)
   })
 
   //
