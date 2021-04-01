@@ -9,7 +9,7 @@ const jsonParser = express.json()
 
 const serializeMonth = month => ({
   id: month.id,
-  title: xss(bookmark.title),
+  // title: xss(bookmark.title),
   monthName: month.monthName,
   mealName: month.mealName,
   result:month.result,
@@ -27,9 +27,9 @@ monthsRouter
   //   res.json(store.months)
   // })
   .get((req, res, next) => {
-    MonthsService.getAllMonths(req.app.get('store'))
+    MonthsService.getAllMonths()
       .then(months => {
-        res.json(months.map(serializeMonth))
+        res.json(months.map(serializeMonth('store')))
       })
       .catch(next)
   })
