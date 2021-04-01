@@ -27,7 +27,7 @@ const { v4: uuid } = require('uuid')
 ////////
 
 //eslint-disable-next-line
-export default {
+         store = {
     "months": [
       {
         id:1,
