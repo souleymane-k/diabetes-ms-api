@@ -79,27 +79,38 @@ monthsRouter
 //       .json(month)
 //   })
 
-monthsRouter
-.route('/months/monthName')
-.get((req,res)=>{
-  const {monthName} = req.params
-  let array = [];
-  for(let i=0; i<store.months.length; i++){
-    if(months[i].monthName === monthName){
-      array.push(months[i].monthName)
-    }
-  }
-  res.json(array)
-})
+// monthsRouter
+// .route('/months/monthName')
+// .get((req,res)=>{
+//   const {monthName} = req.params
+//   let array = [];
+//   for(let i=0; i<store.months.length; i++){
+//     if(months[i].monthName === monthName){
+//       array.push(months[i].monthName)
+//     }
+//   }
+//   res.json(array)
+// })
 
   monthsRouter
-  .route('/:monthName')
+  .route('/:id')
   .get((req, res) => {
     const {monthName} = req.params
-    const month = store.months.find(i => i.monthName == monthName)
+    const month = store.months.find(i => i.id == monthName)
     
     res.json(month)
   })
+
+  // monthsRouter
+  // .route('/:monthName')
+  // .get((req, res) => {
+  //   const {monthName} = req.params
+  //   const month = store.months.find(i => i.monthName == monthName)
+    
+  //   res.json(month)
+  // })
+
+
 
   monthsRouter
   .route('/:month_id')
