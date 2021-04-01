@@ -89,7 +89,7 @@ monthsRouter
       array.push(months[i].monthName)
     }
   }
-  res.json(monthName)
+  res.json(array)
 })
 
   monthsRouter
