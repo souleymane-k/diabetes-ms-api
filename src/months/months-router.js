@@ -83,13 +83,13 @@ monthsRouter
 .route('/months/monthName')
 .get((req,res)=>{
   const {monthName} = req.params
-  let array = [];
+  let monthName = [];
   for(let i=0; i<store.months.length; i++){
     if(months[i].monthName === sameMonthName){
-      array.push(months[i].monthName)
+      monthName.push(months[i].monthName)
     }
   }
-  res.json(array)
+  res.json(monthName)
 })
 
   monthsRouter
