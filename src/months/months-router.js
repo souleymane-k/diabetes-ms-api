@@ -12,7 +12,7 @@ const jsonParser = express.json()
 monthsRouter
 .route('/months')
   .get((req, res) => {
-    res.json(months)
+    res.json(store.months)
   })
   
 
