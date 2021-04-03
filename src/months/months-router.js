@@ -124,22 +124,22 @@ module.exports = monthsRouter
 
 
 ////////////////////////////////
-const path = require('path')
-const express = require('express')
-const store = require('../store')
+// const path = require('path')
+// const express = require('express')
+// const store = require('../store')
 
 
-const monthsRouter = express.Router()
-// const bodyParser = express.json()
-const jsonParser = express.json()
+// const monthsRouter = express.Router()
+// // const bodyParser = express.json()
+// const jsonParser = express.json()
 
 
 
-monthsRouter
-.route('/months')
-  .get((req, res) => {
-    res.json(store.months)
-  })
+// monthsRouter
+// .route('/months')
+//   .get((req, res) => {
+//     res.json(store.months)
+//   })
   
 
   // monthsRouter
@@ -151,13 +151,13 @@ monthsRouter
   //   res.json(month)
   // })
 
-  monthsRouter
-  .route('/:monthId')
-  .get((req, res) => {
-    const{monthId} = req.params
-    const month = store.months.find(i => i.monthId == monthId)
-    res.json(month)
-  })
+  // monthsRouter
+  // .route('/:monthId')
+  // .get((req, res) => {
+  //   const{monthId} = req.params
+  //   const month = store.months.find(i => i.monthId == monthId)
+  //   res.json(month)
+  // })
 
   
 
@@ -190,7 +190,7 @@ monthsRouter
 
 
 
-module.exports = monthsRouter
+// module.exports = monthsRouter
 
 // const month =() => ({
     //     id: month.id,
