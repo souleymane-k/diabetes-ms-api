@@ -1,5 +1,131 @@
 const path = require('path')
 const express = require('express')
+//const xss = require('xss')
+const MonthsService = require('./months-service')
+
+const monthsRouter = express.Router()
+const jsonParser = express.json()
+
+const serializeMonth = month => ({
+  id: month.id,
+  // name: xss(folder.name),
+  name:month.name,
+})
+
+monthsRouter
+  .route('/')
+  .get((req, res, next) => {
+    const knexInstance = req.app.get('db')
+    MonthsService.getAllMonths(knexInstance)
+      .then(months => {
+        res.json(months.map(serializeMonth))
+      })
+      .catch(next)
+  })
+  .post(jsonParser, (req, res, next) => {
+    const {name} = req.body
+    const newMonth = {name}
+
+    for (const [key, value] of Object.entries(newMonth)) {
+      if (value == null) {
+        return res.status(400).json({
+          error: { message: `Missing '${key}' in request body` }
+        })
+      }
+    }
+
+    newMonth.name = name;
+  
+
+    MonthsService.insertMonth(
+      req.app.get('db'),
+      newMonth
+    )
+      .then(month => {
+        res
+          .status(201)
+          .location(path.posix.join(req.originalUrl, `/${month.id}`))
+          .json(serializeMonth(month))
+      })
+      .catch(next)
+  })
+
+  monthsRouter
+  .route('/:month_id')
+  .all((req, res, next) => {
+    MonthsService.getById(
+      req.app.get('db'),
+      req.params.month_id
+    )
+      .then(month => {
+        if (!month) {
+          return res.status(404).json({
+            error: { message: `Month doesn't exist` }
+          })
+        }
+        res.month = month
+        next()
+      })
+      .catch(next)
+  })
+  .get((req, res, next) => {
+    res.json(serializeMonth(res.month))
+  })
+  .delete((req, res, next) => {
+    MonthsService.deleteMonth(
+      req.app.get('db'),
+      req.params.month_id
+    )
+      .then(numRowsAffected => {
+        res.status(204).end()
+      })
+      .catch(next)
+  })
+  .patch(jsonParser, (req, res, next) => {
+    const {name} = req.body
+    const monthToUpdate = {name }
+
+    const numberOfValues = Object.values(monthToUpdate).filter(Boolean).length
+    if (numberOfValues === 0)
+      return res.status(400).json({
+        error: {
+          message: `Request body must contain  'name'`
+        }
+      })
+
+      MonthsService.updateMonth(
+      req.app.get('db'),
+      req.params.month_id,
+      monthToUpdate
+    )
+      .then(numRowsAffected => {
+        res.status(204).end()
+      })
+      .catch(next)
+  })
+
+module.exports = monthsRouter
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////////////////////////////////
+const path = require('path')
+const express = require('express')
 const store = require('../store')
 
 

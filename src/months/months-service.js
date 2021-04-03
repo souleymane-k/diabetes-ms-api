@@ -2,13 +2,13 @@ const MonthsService = {
     getAllMonths(knex){
         return knex
         .select('*')
-        .from('months')
+        .from('diabetes_months')
     },
     
    insertMonths(knex, newMonth) {
              return knex
               .insert(newMonth)
-              .into('Months')
+              .into('diabetes_months')
               .returning('*')
               .then(rows =>{
                   return rows[0]
@@ -16,21 +16,21 @@ const MonthsService = {
            },
      getById(knex, id) {
                return knex
-               .from('months')
+               .from('diabetes_months')
                .select('*')
                .where('id', id)
                .first()
             },
     
      deleteMonth(knex, id) {
-             return knex('months')
+             return knex('diabetes_months')
                 .where({ id })
                 .delete()
                  },
 
                  
      updateMonth(knex, id, newMonthFields) {
-                return knex('months')
+                return knex('diabetes_months')
                     .where({ id })
                     .update(newMonthFields)
                      },
