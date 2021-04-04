@@ -13,7 +13,7 @@ const app = express()
 
 
 
-const morganOption = (NODE_ENV === 'production')
+const morganOption = (NODE_ENV === 'development')
   ? 'tiny'
   : 'common';
 
