@@ -23,17 +23,16 @@ app.use(helmet())
 app.use(cors())
 app.use(monthsRouter)
 app.use(monthsRouter)
-app.use('/months', monthsRouter)
-app.use('/results', monthsRouter)
+app.use('/api/months', monthsRouter)
+app.use('/api/results', resultsRouter)
 
-// app.use('/api/months', monthsRouter)
 
 app.get('/', (req, res)=>{
-    res.send('Hello, boilerplate!')
+    res.send('Hello, diabetes-ms-api!')
 })
 app.use(function errorHandler(error, req, res, next){
     let response
-    if(NODE_ENV ==='production'){
+    if(NODE_ENV ==='development'){
         response = { error: { message: 'server error' } }
     }else{
         console.error(error)
