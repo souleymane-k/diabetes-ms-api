@@ -3,7 +3,7 @@ CREATE TABLE diabetes_months (
   name TEXT NOT NULL 
 );
 
--- ALTER TABLE diabetes_results
---   ADD COLUMN
---     folderid INTEGER REFERENCES diabetes_months(id)
---     ON DELETE SET NULL;
+ALTER TABLE diabetes_results
+  ADD COLUMN
+    folderid INTEGER REFERENCES diabetes_months(id)
+    ON DELETE SET NULL;
