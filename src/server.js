@@ -1,78 +1,20 @@
-require("dotenv").config();
-const knex=require('knex');
-const app =require('./app');
-const { PORT, DATABASE_URL } = require('./config');
-const pg = require('pg');
+require('dotenv').config()
+const knex = require('knex')
+const app = require('./app')
+const { PORT, DATABASE_URL, NODE_ENV, AUTH_SECRET } = require('./config')
 
+if (NODE_ENV === 'production' && !AUTH_SECRET) {
+  throw new Error('AUTH_SECRET must be set in production')
+}
 
-const { PORT, DATABASE_URL } = require('./config')
-const db = knex({
-  client: 'pg',
-  connection: DATABASE_URL,
-  })
+const connection = { connectionString: DATABASE_URL }
+if (process.env.PGSSLMODE === 'require' || process.env.DATABASE_SSL === 'true') {
+  connection.ssl = { rejectUnauthorized: process.env.PGSSL_REJECT_UNAUTHORIZED !== 'false' }
+}
+const db = knex({ client: 'pg', connection })
+app.set('db', db)
 
-// pg.defaults.ssl = process.env.NODE_ENV ==="development"?
-// {rejectUnauthorized:false}:false
-// const db = knex({
-//   client:"pg",
-//   connection:DATABASE_URL,
-//   ssl: true,
-//     extra: {
-//       ssl: {
-//         rejectUnauthorized: false
-//       },
-//     },
-// });
-
-
-
-app.set("db", db);
-
-app.listen(PORT,() =>{
-  console.log(`server listening at http://localhost:${PORT}`);
-})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const app = require('./app');
-// const { PORT } = require('./config');
-// const cors = require('cors');
-// const {CLIENT_ORIGIN} = require('./config');
-
-// app.use(
-//     cors({
-//         origin: CLIENT_ORIGIN
-//     })
-// );
-
-
-
-//  app.get('/api/*', (req, res) => {
-//    res.json({ok: true});
-//  });
-// app.listen(PORT, () => {
-//   console.log(`Server listening at http://localhost:${PORT}`)
-// })
-
-// module.exports = {app};
-
-
-
-
-
-// const PORT = process.env.PORT || 3000;
-
+const server = app.listen(PORT, () => console.log(`server listening on port ${PORT}`))
+const shutdown = () => server.close(async () => { await db.destroy(); process.exit(0) })
+process.on('SIGINT', shutdown)
+process.on('SIGTERM', shutdown)

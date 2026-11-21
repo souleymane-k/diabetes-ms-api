@@ -1,36 +1,32 @@
-require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const helmet = require('helmet')
-const { NODE_ENV } = require('./config')
+const { NODE_ENV, CLIENT_ORIGIN } = require('./config')
 const monthsRouter = require('./months/months-router')
 const resultsRouter = require('./results/results-router')
+const usersRouter = require('./users/users-router')
+const authRouter = require('./auth/auth-router')
 
 const app = express()
+const origins = CLIENT_ORIGIN === '*' ? '*' : CLIENT_ORIGIN.split(',').map(origin => origin.trim())
 
-const morganOption = NODE_ENV === 'development' ? 'tiny' : 'common'
-
-app.use(morgan(morganOption))
+app.use(morgan(NODE_ENV === 'development' ? 'tiny' : 'common'))
 app.use(helmet())
-app.use(cors())
-app.use(express.json())
+app.use(cors({ origin: origins }))
+app.use(express.json({ limit: '100kb' }))
+app.get('/', (req, res) => res.json({ ok: true, service: 'diabetes-ms-api' }))
 app.use('/api/months', monthsRouter)
 app.use('/api/results', resultsRouter)
+app.use('/api/users', usersRouter)
+app.use('/api/auth', authRouter)
 
-app.get('/', (req, res) => {
-  res.send('Hello, diabetes-ms-api!')
-})
-
-app.use(function errorHandler(error, req, res, next) {
-  let response
-  if (NODE_ENV === 'production') {
-    response = { error: { message: 'server error' } }
-  } else {
-    console.error(error)
-    response = { message: error.message || 'server error' }
-  }
-  res.status(error.status || 500).json(response)
+app.use((error, req, res, next) => {
+  if (res.headersSent) return next(error)
+  if (NODE_ENV !== 'production') console.error(error)
+  const status = error.status || 500
+  const message = NODE_ENV === 'production' && status >= 500 ? 'server error' : (error.message || 'server error')
+  res.status(status).json({ error: { message } })
 })
 
 module.exports = app

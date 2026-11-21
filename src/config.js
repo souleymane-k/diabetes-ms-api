@@ -1,12 +1,12 @@
 require('dotenv').config()
 
-module.exports = {
-    PORT: process.env.PORT || 8002,
-    DATABASE_URL: process.env.DATABASE_URL || 'postgresql://dunder_mifflin@localhost/diabetes',
-    API_TOKEN: process.env.API_TOKEN || "2ad6cd5c-17ed-4b7a-9309-8252fb3eb820",
-    NODE_ENV: process.env.NODE_ENV || 'development',
-    API_BASE_URL: process.env.REACT_APP_API_BASE_URL || "http://localhost:3187/api",
-    TEST_DATABASE_URL: process.env.TEST_DATABASE_URL || 'postgresql://dunder_mifflin@localhost/diabetes-test'
-  }
+const isProduction = process.env.NODE_ENV === 'production'
 
-  // "http://localhost:3187/api"
+module.exports = {
+  PORT: Number(process.env.PORT) || 8002,
+  DATABASE_URL: process.env.DATABASE_URL || process.env.DB_URL || 'postgresql://dunder_mifflin@localhost/diabetes',
+  NODE_ENV: process.env.NODE_ENV || 'development',
+  CLIENT_ORIGIN: process.env.CLIENT_ORIGIN || '*',
+  AUTH_SECRET: process.env.AUTH_SECRET || (isProduction ? null : 'local-development-secret-change-me'),
+  TEST_DATABASE_URL: process.env.TEST_DATABASE_URL || process.env.TEST_DB_URL || 'postgresql://dunder_mifflin@localhost/diabetes-test',
+}

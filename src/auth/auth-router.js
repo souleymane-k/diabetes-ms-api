@@ -1,56 +1,22 @@
+const express = require('express')
+const AuthService = require('./auth-service')
+const { issueToken } = require('./token-service')
 
-const express = require('express');
-const bodyParser = express.json();
-const authRouter = express.Router();
-// const {requireAuth} = require('../middleware/jwt-auth');
-// const AuthService = require('./auth-service');
-const UserService = require('../users/user-service');
-const CycleService = require('../cycles/cycle-service');
+const authRouter = express.Router()
 
-authRouter
-  .route('/login')
-  .post(bodyParser, async (req, res, next) => {
-
-    const {email, password} = req.body;
-    
-    if (!email || !password) {
-      return next({status: 400, message: 'email and password required'});
+authRouter.post('/login', async (req, res, next) => {
+  const { email, username, password } = req.body || {}
+  const login = email || username
+  if (typeof login !== 'string' || typeof password !== 'string' || !password) {
+    return res.status(400).json({ error: { message: 'Email and password are required' } })
+  }
+  try {
+    const user = await AuthService.findByLogin(req.app.get('db'), login)
+    if (!user || !AuthService.verifyPassword(password, user.password_hash)) {
+      return res.status(401).json({ error: { message: 'Invalid email or password' } })
     }
-    
+    res.json({ authToken: issueToken(user), user: AuthService.serializeUser(user) })
+  } catch (error) { next(error) }
+})
 
-    try {
-      const user = await AuthService.findByEmail(req.app.get('db'), email);
-      if (!user) {
-        return next({status: 401, message: 'invalid email or password'});
-       }
-      
-      const isMatch = await AuthService.comparePasswords(password, user.password);
-      if (!isMatch) {
-        return next({status: 401, message: 'invalid email or password'});
-      }
-
-      const sub = user.email;
-      const payload = { user_id: user.id };
-      const authToken = await AuthService.createJwt(sub, payload);
-      
-
-      res.json({authToken, user: UserService.serialize(user)});
-    } catch(err) {
-      next({status: 500, message: err.message});
-    }
-  });
-
-authRouter
-  .route('/current-user')
-  .get(requireAuth, async (req, res, next) => {
-    const user = UserService.serialize(req.user);
-    try {
-      const cycle = await CycleService.findCurrentByUserId(req.app.get('db'), user.id);
-      user.hasCurrentCycle = cycle ? true : false;
-      res.json(user);
-    } catch(err) {
-      next({status: 500, message: err.message});
-    }
-  });
-
-module.exports = authRouter;
+module.exports = authRouter
